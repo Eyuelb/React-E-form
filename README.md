@@ -1,15 +1,14 @@
-# React + TypeScript + Vite
-# Mantine
+# React + TypeScript + Mantine
+<p align="center">
+<img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React JS - Türkçe Dokümantasyon" height="100">
+</p>
 
+<h1 align="center">React Ts - </h1>
 [![NPM](https://img.shields.io/npm/l/@mantine/core)](https://github.com/mantinedev/mantine/blob/master/LICENSE)
 ## Links
 
+
 - [Documentation](https://mantine.dev/)
-- [Contributing](https://mantine.dev/pages/contributing/)
-- [Ask question or give feedback](https://github.com/mantinedev/mantine/discussions)
-- [Changelog](https://mantine.dev/pages/changelog/)
-- [Follow on Twitter](https://twitter.com/mantinedev)
-- [Join Discord community](https://discord.gg/wbH82zuWMN)
 
 ## Packages
 
