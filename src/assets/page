@@ -1,0 +1,489 @@
+import { useEffect, useState } from "react";
+// import { DndList } from "./components";
+import FormBuilderDragDrop from "../FormBuilder/lib";
+import { Box, Text, createStyles, useMantineTheme } from "@mantine/core";
+import { Attribute } from "../FormBuilder/type";
+
+// const formdata = [
+//     {
+//       "position": 6,
+//       "mass": 12.011,
+//       "symbol": "C",
+//       "name": "Carbon"
+//     },
+//     {
+//       "position": 7,
+//       "mass": 14.007,
+//       "symbol": "N",
+//       "name": "Nitrogen"
+//     },
+//     {
+//       "position": 39,
+//       "mass": 88.906,
+//       "symbol": "Y",
+//       "name": "Yttrium"
+//     },
+//     {
+//       "position": 56,
+//       "mass": 137.33,
+//       "symbol": "Ba",
+//       "name": "Barium"
+//     },
+//     {
+//       "position": 58,
+//       "mass": 140.12,
+//       "symbol": "Ce",
+//       "name": "Cerium"
+//     }
+//   ]
+
+export const FormBuilderPage: React.FC = () => {
+  // State to hold the tasks data
+  const [attributes, setAttributes] = useState<Attribute[]>(mockTasks);
+
+  // A callback function to handle changes in the state
+  const handleStateChange = (names: string[]) => {
+    console.log('Attributes with "View":', names);
+  };
+
+  // const [items, setItems] = useState<ListItem[]>([
+  //   { id: 1, text: "Item 1", position: 0, list: 'draggable' },
+  //   { id: 2, text: "Item 2", position: 1, list: 'draggable' },
+  //   { id: 3, text: "Item 3", position: 2, list: 'draggable' },
+  //   { id: 4, text: "Item 4", position: 3, list: 'draggable' },
+  //   { id: 5, text: "Item 5", position: 4, list: 'draggable' },
+  // ]);
+  // useEffect(() => {
+  //   console.log(items)
+  
+  //   return () => {
+  //     console.log('clean')
+  //   }
+  // }, [items])
+  
+  return (
+    <div>
+      <h1>FormBuilder</h1>
+      <FormBuilderDragDrop
+        callBackState={handleStateChange}
+        attributes={attributes}
+        setAttributes={setAttributes}
+        isLoading={false}
+
+      />
+      {/* <DraggableList items={items} setItems={setItems} />
+      <SecondList items={items} setItems={setItems} /> */}
+
+      {/* <DndList data={formdata}/> */}
+    </div>
+  );
+};
+
+interface ListItem {
+  id: number;
+  text: string;
+  position: number;
+  list: 'draggable' | 'second';
+}
+
+const DraggableList = ({
+  items,
+  setItems,
+}: {
+  items: ListItem[];
+  setItems: React.Dispatch<React.SetStateAction<ListItem[]>>;
+}) => {
+  const theme = useMantineTheme();
+
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, id: number) => {
+    e.dataTransfer?.setData("text/plain", id.toString());
+    setTimeout(() => {}, 0);
+  };
+
+  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+    // e.currentTarget.style.opacity = '1';
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    // e.currentTarget.classList.add(classes['drag-over']);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    //e.currentTarget.classList.remove(classes['drag-over']);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, targetId: number) => {
+    // e.currentTarget.classList.remove(classes['drag-over']);
+
+    const sourceId = e.dataTransfer.getData("text/plain");
+    const sourceIndex = items.findIndex((item) => item.id === +sourceId);
+    const targetIndex = items.findIndex((item) => item.id === targetId);
+
+    if (sourceIndex !== -1 && targetIndex !== -1) {
+      const newItems = [...items];
+      const [draggedItem] = newItems.splice(sourceIndex, 1);
+      newItems.splice(targetIndex, 0, draggedItem);
+
+      // Update the postion property for each item after reordering
+      newItems.forEach((item, index) => {
+        item.position = index;
+      });
+
+      setItems(newItems);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Draggable List</h1>
+      <p>Drag and reorder the items in the list.</p>
+      <div style={{ maxWidth: 200 }}>
+        {items.map((item) => ((item.list === 'draggable')&&
+          <Box
+            key={item.position}
+            sx={{
+              background:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[5]
+                  : theme.colors.gray[0],
+              padding: theme.spacing.xs,
+              marginBottom: theme.spacing.xs,
+              cursor: "grab",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              borderRadius: theme.radius.sm,
+              boxShadow: theme.shadows.sm,
+              fontSize: theme.fontSizes.sm,
+
+              "&.fade-enter": {
+                opacity: 0,
+                transform: "translateY(-20px)",
+              },
+
+              "&.fade-enter-active": {
+                opacity: 1,
+                transform: "translateY(0)",
+                transition: "opacity 300ms, transform 300ms",
+              },
+
+              "&.fade-exit": {
+                opacity: 1,
+                transform: "translateY(0)",
+              },
+
+              "&.fade-exit-active": {
+                opacity: 0,
+                transform: "translateY(-20px)",
+                transition: "opacity 300ms, transform 300ms",
+              },
+
+              "-moz-drag-over": {
+                borderTop: `2px dashed ${
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[2]
+                    : theme.colors.gray[4]
+                }`,
+                borderBottom: `2px dashed ${
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[2]
+                    : theme.colors.gray[4]
+                }`,
+              },
+            }}
+            draggable
+            onDragStart={(e) => handleDragStart(e, item.id)}
+            onDragEnd={handleDragEnd}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, item.id)}
+          >
+            <Text size="sm">
+              Index {item.position} :
+              id {item.id} :
+              Text {item.text} :
+              Position {item.position} :
+            </Text>
+            <span style={{ fontSize: theme.fontSizes.lg, cursor: "grab" }}>
+              ☰
+            </span>
+          </Box>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const SecondList = ({
+  items,
+  setItems,
+}: {
+  items: ListItem[];
+  setItems: React.Dispatch<React.SetStateAction<ListItem[]>>;
+}) => {
+  const theme = useMantineTheme();
+
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, id: number) => {
+    e.dataTransfer?.setData("text/plain", id.toString());
+    setTimeout(() => {}, 0);
+  };
+
+  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+    // e.currentTarget.style.opacity = '1';
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    // e.currentTarget.classList.add(classes['drag-over']);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    //e.currentTarget.classList.remove(classes['drag-over']);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, targetId: number) => {
+    // e.currentTarget.classList.remove(classes['drag-over']);
+
+    const sourceId = e.dataTransfer.getData("text/plain");
+    const sourceIndex = items.findIndex((item) => item.id === +sourceId);
+    const targetIndex = items.findIndex((item) => item.id === targetId);
+
+    if (sourceIndex !== -1 && targetIndex !== -1) {
+      const newItems = [...items];
+      const [draggedItem] = newItems.splice(sourceIndex, 1);
+      newItems.splice(targetIndex, 0, draggedItem);
+
+      // Update the postion property for each item after reordering
+      newItems.forEach((item, index) => {
+        item.position = index;
+      });
+
+      setItems(newItems);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Draggable List</h1>
+      <p>Drag and reorder the items in the list.</p>
+      <Box sx={{
+          width: 400, 
+          height: 400,
+          boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+        }}>
+        {items.map((item) => ((item.list === 'second')&&
+          <Box
+            key={item.position}
+            sx={{
+              background:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[5]
+                  : theme.colors.gray[0],
+              padding: theme.spacing.xs,
+              marginBottom: theme.spacing.xs,
+              cursor: "grab",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              borderRadius: theme.radius.sm,
+              boxShadow: theme.shadows.sm,
+              fontSize: theme.fontSizes.sm,
+
+              "&.fade-enter": {
+                opacity: 0,
+                transform: "translateY(-20px)",
+              },
+
+              "&.fade-enter-active": {
+                opacity: 1,
+                transform: "translateY(0)",
+                transition: "opacity 300ms, transform 300ms",
+              },
+
+              "&.fade-exit": {
+                opacity: 1,
+                transform: "translateY(0)",
+              },
+
+              "&.fade-exit-active": {
+                opacity: 0,
+                transform: "translateY(-20px)",
+                transition: "opacity 300ms, transform 300ms",
+              },
+
+              "-moz-drag-over": {
+                borderTop: `2px dashed ${
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[2]
+                    : theme.colors.gray[4]
+                }`,
+                borderBottom: `2px dashed ${
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[2]
+                    : theme.colors.gray[4]
+                }`,
+              },
+            }}
+            draggable
+            onDragStart={(e) => handleDragStart(e, item.id)}
+            onDragEnd={handleDragEnd}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, item.id)}
+          >
+            <Text size="sm">
+              Index {item.position} :
+              id {item.id} :
+              Text {item.text} :
+              Position {item.position} :
+            </Text>
+            <span style={{ fontSize: theme.fontSizes.lg, cursor: "grab" }}>
+              ☰
+            </span>
+          </Box>
+        ))}
+      </Box>
+    </div>
+  );
+};
+
+// const SecondList = ({
+//   items,
+//   setItems,
+// }: {
+//   items: ListItem[];
+//   setItems: React.Dispatch<React.SetStateAction<ListItem[]>>;
+// }) => {
+//   const theme = useMantineTheme();
+
+//   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+//     e.preventDefault();
+//   };
+
+//   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+//     const sourceId = e.dataTransfer.getData("text/plain");
+//     const sourceIndex = items.findIndex((item) => item.id === +sourceId);
+//     // const targetIndex = items.findIndex((item) => item.id === sourceIndex);
+//     const targetIndex = items.find((item) => item.id.toString() === sourceId);
+
+    
+//     console.log(sourceId === targetIndex?.id.toString())
+//     if (sourceId === targetIndex?.id.toString()) {
+//       const newItems = [...items];
+//       items.forEach((item) => {
+//         if (item.id.toString() === sourceId) {
+//           item.list = 'second';
+//         }
+//       });
+//       setItems(newItems);
+//     }
+
+//     // if (sourceIndex !== -1 && targetIndex?.id !== -1) {
+//     //   const newItems = [...items];
+//     //   const [draggedItem] = newItems.splice(sourceIndex, 1);
+//     //   newItems.splice(targetIndex.id, 0, draggedItem);
+  
+//     //   // Update the position property for each item after reordering
+//     //   newItems.forEach((item, index) => {
+//     //     item.position = index;
+//     //   });
+  
+//       // If the sourceId and targetId are equal, it means the item was dragged within the same list
+//       // In this case, we update the list property to 'draggable' to keep it in the same list
+
+//    // }
+//   };
+//   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, id: number) => {
+//     e.dataTransfer?.setData("text/plain", id.toString());
+//     setTimeout(() => {}, 0);
+//   };
+//   const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+//     // e.currentTarget.style.opacity = '1';
+//   };
+//   return (
+//     <div>
+//       <h1>Second List</h1>
+//       <Box
+//         draggable
+//         onDragOver={handleDragOver}
+//         onDrop={(e) => handleDrop(e)}
+//         style={{ }}
+//         sx={{
+//           width: 400, 
+//           height: 400,
+//           boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+//         }}
+//       >
+//         {items.map((item) => ((item.list === 'second')&&
+          
+//           <Box
+//            draggable
+//             // onDragStart={(e) => handleDragStart(e,item.id)}
+//             // onDragEnd={handleDragEnd}
+//             key={item.position}
+//             sx={{
+//               background:
+//                 theme.colorScheme === "dark"
+//                   ? theme.colors.dark[5]
+//                   : theme.colors.gray[0],
+//               padding: theme.spacing.xs,
+//               marginBottom: theme.spacing.xs,
+//               cursor: "grab",
+//               display: "flex",
+//               justifyContent: "space-between",
+//               alignItems: "center",
+//               borderRadius: theme.radius.sm,
+//               boxShadow: theme.shadows.sm,
+//               fontSize: theme.fontSizes.sm,
+
+//               "&.fade-enter": {
+//                 opacity: 0,
+//                 transform: "translateY(-20px)",
+//               },
+
+//               "&.fade-enter-active": {
+//                 opacity: 1,
+//                 transform: "translateY(0)",
+//                 transition: "opacity 300ms, transform 300ms",
+//               },
+
+//               "&.fade-exit": {
+//                 opacity: 1,
+//                 transform: "translateY(0)",
+//               },
+
+//               "&.fade-exit-active": {
+//                 opacity: 0,
+//                 transform: "translateY(-20px)",
+//                 transition: "opacity 300ms, transform 300ms",
+//               },
+
+//               "-moz-drag-over": {
+//                 borderTop: `2px dashed ${
+//                   theme.colorScheme === "dark"
+//                     ? theme.colors.dark[2]
+//                     : theme.colors.gray[4]
+//                 }`,
+//                 borderBottom: `2px dashed ${
+//                   theme.colorScheme === "dark"
+//                     ? theme.colors.dark[2]
+//                     : theme.colors.gray[4]
+//                 }`,
+//               },
+//             }}
+//           >
+//             <Text size="sm">
+//               Index {item.position}: {item.text}
+//             </Text>
+//             <span style={{ fontSize: theme.fontSizes.lg, cursor: "grab" }}>
+//               ☰
+//             </span>
+//           </Box>
+//         ))}
+//       </Box>
+//     </div>
+//   );
+// };
+
+export default DraggableList;
