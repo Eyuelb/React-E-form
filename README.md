@@ -1,26 +1,24 @@
 # React + TypeScript + Vite
+# Mantine
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![NPM](https://img.shields.io/npm/l/@mantine/core)](https://github.com/mantinedev/mantine/blob/master/LICENSE)
+## Links
 
-Currently, two official plugins are available:
+- [Documentation](https://mantine.dev/)
+- [Contributing](https://mantine.dev/pages/contributing/)
+- [Ask question or give feedback](https://github.com/mantinedev/mantine/discussions)
+- [Changelog](https://mantine.dev/pages/changelog/)
+- [Follow on Twitter](https://twitter.com/mantinedev)
+- [Join Discord community](https://discord.gg/wbH82zuWMN)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Packages
 
-## Expanding the ESLint configuration
+- `@mantine/hooks` – collection of 50+ hooks for state and UI management
+- [`@mantine/styles`](https://mantine.dev/styles/create-styles/) – [emotion](https://emotion.sh/) based css-in-js library that is used in all Mantine components
+- `@mantine/core` – core components library – 100+ components, exports everything from `@mantine/styles`
+- [`@mantine/form`](https://mantine.dev/form/use-form/) – forms management library
+projects
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
 
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
